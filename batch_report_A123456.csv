@@ -1,0 +1,29 @@
+Section,Field,Description
+General Information,Product Name,Monoclonal Antibody Therapeutic
+General Information,Batch Number,A123456
+General Information,Manufacturing Start Date,2025-04-01
+General Information,Manufacturing End Date,2025-04-07
+Production Details,Raw Material - Name,Protein Base
+Production Details,Raw Material - Lot Number,PRTG789
+Production Details,Solvent - Lot Number,SMV234
+Production Details,Environmental Conditions - Temperature,37°C
+Production Details,Environmental Conditions - Humidity,50%
+Production Details,Environmental Conditions - Pressure,1.5 bar
+Manufacturing Stages,Stage Name,Mixing Reaction
+Manufacturing Stages,Start Time,2025-04-01 10:00 AM
+Manufacturing Stages,End Time,2025-04-01 06:00 PM
+Manufacturing Stages,Responsible Person,John Doe
+Manufacturing Stages,Stage Name,Purification
+Manufacturing Stages,Start Time,2025-04-03 08:00 AM
+Manufacturing Stages,End Time,2025-04-03 03:00 PM
+Manufacturing Stages,Responsible Person,Jane Smith
+Quality Control,Test Name,Biological Activity
+Quality Control,Result,99.5%
+Quality Control,Verdict,Passed
+Quality Control,Test Name,Residual Solvent
+Quality Control,Result,0.05%
+Quality Control,Verdict,Passed
+Quality Control,Observations,Temperature exceeded during mixing (38°C) - corrected.
+Final Review,Reviewed By,Dr. Emily White
+Final Review,Review Date,2025-04-07
+Final Review,Conclusion,Batch A123456 meets all specifications and is approved for distribution.

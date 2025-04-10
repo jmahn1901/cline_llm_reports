@@ -1,0 +1,8 @@
+Section,Field,Description
+Quality Control,Test Name,Stability
+Quality Control,Result,96.5%
+Quality Control,Verdict,Passed
+Quality Control,Test Name,Impurities
+Quality Control,Result,0.02%
+Quality Control,Verdict,Passed
+Quality Control,Observations,Temperature slightly below target - corrected.

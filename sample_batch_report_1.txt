@@ -1,0 +1,50 @@
+Product: 10mg Blood Pressure Capsules
+Batch No.: BP-CAP-23004
+Manufacturing Date: 2025-04-01
+Expiry Date: 2027-04-01
+Operator: John D.
+Supervisor: Mary L.
+
+1. Process Model
+- Raw Material Intake → Blending → Capsule Filling → Quality Inspection → Packaging → Labeling
+- Each step includes automated data capture from equipment sensors (Mixing RPM, capsule count, weight checks).
+
+2. Process Description
+- Blending: Active Ingredient A and Binder B were mixed at 60 RPM for 20 minutes.
+- Capsule Filling: Capsules filled using Machine #4, calibrated to 10mg ± 0.2mg.
+- Inspection: Visual and weight checks were performed every 1000 capsules.
+- Packaging: Capsules were packed in foil blister strips and boxed.
+
+3. Sampling Plan
+- In-process sampling: Every 1000 capsules
+  - Checked for: Weight, Uniformity, Appearance
+- Final sample size: 20 capsules pulled randomly
+  - Sent to Quality Control Lab
+  - Tests: Dissolution, Potency, Microbial Limits
+
+4. Diagrams
+- Diagram 1: Process flow from raw material intake to packaging
+- Diagram 2: Capsule filling equipment layout
+- Diagram 3: Quality inspection checkpoints in the production line
+
+5. SOPs Followed
+| SOP ID    | Description                          |
+|-----------|--------------------------------------|
+| SOP-123   | Capsule Filling Procedure            |
+| SOP-124   | Blending Operation Guidelines        |
+| SOP-201   | Equipment Cleaning and Setup         |
+| SOP-305   | In-process Sampling and QC Protocol  |
+
+6. Bill of Materials (BOM)
+| Material             | Batch No. | Quantity Used | Source     |
+|----------------------|-----------|---------------|------------|
+| Active Ingredient A  | AI-2211   | 10 kg         | Supplier X |
+| Binder B             | BB-4420   | 2 kg          | Supplier Y |
+| Gelatin Capsules     | GC-3301   | 10,000 pcs    | Supplier Z |
+| Labels               | LBL-120   | 10,000 pcs    | In-house   |
+| Packaging Boxes      | PB-8771   | 10,000 pcs    | Supplier X |
+
+7. AI Cross-Check Summary
+- All materials matched BOM.
+- Process steps adhered to SOPs.
+- No anomalies in sampling intervals or results.

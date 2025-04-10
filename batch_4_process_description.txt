@@ -1,0 +1,4 @@
+Mixing: Active Ingredient G and Binder H were mixed at 90 RPM for 35 minutes.
+Capsule Filling: Capsules filled using Machine #7, calibrated to 40mg ± 0.5mg.
+Inspection: Visual and weight checks were performed every 2500 capsules.
+Packaging: Capsules were packed in foil blister strips and boxed.

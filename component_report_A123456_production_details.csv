@@ -1,0 +1,7 @@
+Section,Field,Description
+Production Details,Raw Material - Name,Protein Base
+Production Details,Raw Material - Lot Number,PRTG789
+Production Details,Solvent - Lot Number,SMV234
+Production Details,Environmental Conditions - Temperature,37°C
+Production Details,Environmental Conditions - Humidity,50%
+Production Details,Environmental Conditions - Pressure,1.5 bar

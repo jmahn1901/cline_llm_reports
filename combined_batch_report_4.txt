@@ -1,0 +1,37 @@
+Product: 40mg Focus Capsules
+Batch No.: FC-CAP-23007
+Manufacturing Date: 2025-07-01
+Expiry Date: 2027-07-01
+Operator: Sarah J.
+Supervisor: Mike R.
+
+1. Process Model
+Raw Material Intake → Mixing → Capsule Filling → Quality Inspection → Packaging → Labeling
+Each step includes automated data capture from equipment sensors (Mixing RPM, capsule count, weight checks).
+
+2. Process Description
+Mixing: Active Ingredient G and Binder H were mixed at 90 RPM for 35 minutes.
+Capsule Filling: Capsules filled using Machine #7, calibrated to 40mg ± 0.5mg.
+Inspection: Visual and weight checks were performed every 2500 capsules.
+Packaging: Capsules were packed in foil blister strips and boxed.
+
+3. Sampling Plan
+In-process sampling: Every 2500 capsules
+Checked for: Weight, Uniformity, Appearance
+Final sample size: 35 capsules pulled randomly
+Sent to Quality Control Lab
+Tests: Dissolution, Potency, Microbial Limits
+
+4. SOPs
+SOP-170: Capsule Filling Procedure
+SOP-180: Mixing Operation Guidelines
+SOP-230: Equipment Cleaning and Setup
+SOP-330: In-process Sampling and QC Protocol
+
+5. Bill of Materials (BOM)
+Material             | Batch No. | Quantity Used | Source
+Active Ingredient G  | AI-5511   | 25 kg         | Supplier G
+Binder H             | BH-7720   | 5 kg          | Supplier H
+Gelatin Capsules     | GC-6601   | 25,000 pcs    | Supplier I
+Labels               | LBL-420   | 25,000 pcs    | In-house
+Packaging Boxes      | PB-11771  | 25,000 pcs    | Supplier G

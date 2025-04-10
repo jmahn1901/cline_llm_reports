@@ -1,0 +1,8 @@
+Section,Field,Description
+Quality Control,Test Name,Potency
+Quality Control,Result,98.7%
+Quality Control,Verdict,Passed
+Quality Control,Test Name,Endotoxin
+Quality Control,Result,0.02 EU/mL
+Quality Control,Verdict,Passed
+Quality Control,Observations,Humidity slightly below target - adjusted.

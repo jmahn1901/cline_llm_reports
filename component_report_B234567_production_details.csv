@@ -1,0 +1,7 @@
+Section,Field,Description
+Production Details,Raw Material - Name,Adjuvant Base
+Production Details,Raw Material - Lot Number,ADJ123
+Production Details,Solvent - Lot Number,SMV567
+Production Details,Environmental Conditions - Temperature,35°C
+Production Details,Environmental Conditions - Humidity,55%
+Production Details,Environmental Conditions - Pressure,1.2 bar

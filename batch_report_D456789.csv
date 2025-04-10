@@ -1,0 +1,29 @@
+Section,Field,Description
+General Information,Product Name,Inactivated Virus Vaccine
+General Information,Batch Number,D456789
+General Information,Manufacturing Start Date,2025-07-01
+General Information,Manufacturing End Date,2025-07-07
+Production Details,Raw Material - Name,Inactivated Virus
+Production Details,Raw Material - Lot Number,INV789
+Production Details,Solvent - Lot Number,SMV123
+Production Details,Environmental Conditions - Temperature,34°C
+Production Details,Environmental Conditions - Humidity,65%
+Production Details,Environmental Conditions - Pressure,1.4 bar
+Manufacturing Stages,Stage Name,Inactivation
+Manufacturing Stages,Start Time,2025-07-01 07:00 AM
+Manufacturing Stages,End Time,2025-07-01 03:00 PM
+Manufacturing Stages,Responsible Person,Chris Red
+Manufacturing Stages,Stage Name,Filtration
+Manufacturing Stages,Start Time,2025-07-03 10:00 AM
+Manufacturing Stages,End Time,2025-07-03 02:00 PM
+Manufacturing Stages,Responsible Person,Pat Yellow
+Quality Control,Test Name,Stability
+Quality Control,Result,96.5%
+Quality Control,Verdict,Passed
+Quality Control,Test Name,Impurities
+Quality Control,Result,0.02%
+Quality Control,Verdict,Passed
+Quality Control,Observations,Temperature slightly below target - corrected.
+Final Review,Reviewed By,Dr. Sarah Pink
+Final Review,Review Date,2025-07-07
+Final Review,Conclusion,Batch D456789 meets all specifications and is approved for distribution.

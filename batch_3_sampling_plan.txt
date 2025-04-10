@@ -1,0 +1,5 @@
+In-process sampling: Every 2000 capsules
+Checked for: Weight, Uniformity, Appearance
+Final sample size: 30 capsules pulled randomly
+Sent to Quality Control Lab
+Tests: Dissolution, Potency, Microbial Limits
