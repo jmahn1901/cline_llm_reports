@@ -10,7 +10,7 @@ document.getElementById('fileInput').addEventListener('change', function() {
     alert('Files uploaded successfully.');
 });
 
-document.getElementById('generateButton').addEventListener('click', function() {
+document.getElementById('generateButton').addEventListener('click', async function() {
     if (!window.uploadedFiles || window.uploadedFiles.length === 0) {
         alert('No files uploaded. Please upload files first.');
         return;
@@ -58,18 +58,33 @@ document.getElementById('generateButton').addEventListener('click', function() {
     document.getElementById('reportPreview').innerHTML = reportContent.replace(/\\n/g, '<br>');
 });
 
-document.getElementById('downloadButton').addEventListener('click', function() {
+document.getElementById('downloadButton').addEventListener('click', async function() {
     // Download the generated report
     const reportContent = document.getElementById('reportPreview').innerText;
     if (!reportContent) {
         alert('No report generated yet. Please generate the report first.');
         return;
     }
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+    }
+
+    try {
+        const response = await fetch('http://localhost:8000/upload/', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        document.getElementById('reportPreview').innerHTML = data.report.replace(/\\n/g, '<br>');
+    } catch (error) {
+        console.error('Error generating report:', error);
+    }
     const blob = new Blob([reportContent], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'batch_report.md';
+    a.download = 'batch_report.txt';
     a.click();
     URL.revokeObjectURL(url);
 });
