@@ -1,4 +1,0 @@
-SOP-150: Capsule Filling Procedure
-SOP-160: Blending Operation Guidelines
-SOP-220: Equipment Cleaning and Setup
-SOP-320: In-process Sampling and QC Protocol

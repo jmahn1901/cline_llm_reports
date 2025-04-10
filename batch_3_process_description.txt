@@ -1,4 +1,0 @@
-Blending: Active Ingredient E and Binder F were mixed at 80 RPM for 30 minutes.
-Capsule Filling: Capsules filled using Machine #6, calibrated to 30mg ± 0.4mg.
-Inspection: Visual and weight checks were performed every 2000 capsules.
-Packaging: Capsules were packed in foil blister strips and boxed.

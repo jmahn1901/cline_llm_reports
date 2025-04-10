@@ -1,4 +1,0 @@
-Mixing: Active Ingredient C and Binder D were mixed at 70 RPM for 25 minutes.
-Capsule Filling: Capsules filled using Machine #5, calibrated to 20mg ± 0.3mg.
-Inspection: Visual and weight checks were performed every 1500 capsules.
-Packaging: Capsules were packed in foil blister strips and boxed.

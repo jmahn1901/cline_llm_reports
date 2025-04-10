@@ -1,2 +1,0 @@
-Raw Material Intake → Blending → Capsule Filling → Quality Inspection → Packaging → Labeling
-Each step includes automated data capture from equipment sensors (Mixing RPM, capsule count, weight checks).

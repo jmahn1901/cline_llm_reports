@@ -1,9 +1,0 @@
-Section,Field,Description
-Manufacturing Stages,Stage Name,Mixing Reaction
-Manufacturing Stages,Start Time,2025-04-01 10:00 AM
-Manufacturing Stages,End Time,2025-04-01 06:00 PM
-Manufacturing Stages,Responsible Person,John Doe
-Manufacturing Stages,Stage Name,Purification
-Manufacturing Stages,Start Time,2025-04-03 08:00 AM
-Manufacturing Stages,End Time,2025-04-03 03:00 PM
-Manufacturing Stages,Responsible Person,Jane Smith

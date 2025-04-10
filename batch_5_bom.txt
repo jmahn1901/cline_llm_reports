@@ -1,6 +1,0 @@
-Material             | Batch No. | Quantity Used | Source
-Active Ingredient I  | AI-6611   | 30 kg         | Supplier J
-Binder J             | BJ-8820   | 6 kg          | Supplier K
-Gelatin Capsules     | GC-7701   | 30,000 pcs    | Supplier L
-Labels               | LBL-520   | 30,000 pcs    | In-house
-Packaging Boxes      | PB-12771  | 30,000 pcs    | Supplier J

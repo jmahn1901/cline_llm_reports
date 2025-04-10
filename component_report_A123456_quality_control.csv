@@ -1,8 +1,0 @@
-Section,Field,Description
-Quality Control,Test Name,Biological Activity
-Quality Control,Result,99.5%
-Quality Control,Verdict,Passed
-Quality Control,Test Name,Residual Solvent
-Quality Control,Result,0.05%
-Quality Control,Verdict,Passed
-Quality Control,Observations,Temperature exceeded during mixing (38°C) - corrected.

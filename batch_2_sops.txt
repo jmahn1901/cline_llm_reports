@@ -1,4 +1,0 @@
-SOP-130: Capsule Filling Procedure
-SOP-140: Mixing Operation Guidelines
-SOP-210: Equipment Cleaning and Setup
-SOP-310: In-process Sampling and QC Protocol
