@@ -1,90 +1,108 @@
-document.getElementById('fileInput').addEventListener('change', function() {
-    const fileInput = document.getElementById('fileInput');
-    const files = fileInput.files;
-    if (files.length === 0) {
-        alert('Please select files to upload.');
-        return;
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    // Store the selected files in a globally accessible place
+    window.uploadedFiles = event.target.files;
+    console.log(`Files selected: ${window.uploadedFiles.length}`);
+    if (window.uploadedFiles.length > 0) {
+        alert(`${window.uploadedFiles.length} file(s) ready for processing.`);
     }
-    // Store files for processing
-    window.uploadedFiles = files;
-    alert('Files uploaded successfully.');
 });
 
 document.getElementById('generateButton').addEventListener('click', async function() {
+    const reportPreview = document.getElementById('reportPreview');
+    const generateButton = document.getElementById('generateButton');
+
     if (!window.uploadedFiles || window.uploadedFiles.length === 0) {
-        alert('No files uploaded. Please upload files first.');
+        alert('No files selected. Please select .txt files first.');
         return;
     }
-    // Generate report from uploaded files
-    let reportContent = 'Batch Report\\n\\n';
-    reportContent += 'Product Information\\n';
-    reportContent += 'Product: 10mg Blood Pressure Capsules\\n';
-    reportContent += 'Batch No.: BP-CAP-23004\\n';
-    reportContent += 'Manufacturing Date: 2025-04-01\\n';
-    reportContent += 'Expiry Date: 2027-04-01\\n';
-    reportContent += 'Operator: John D.\\n';
-    reportContent += 'Supervisor: Mary L.\\n\\n';
 
-    reportContent += '1. Process Model\\n';
-    reportContent += 'Raw Material Intake → Blending → Capsule Filling → Quality Inspection → Packaging → Labeling\\n';
-    reportContent += 'Each step includes automated data capture from equipment sensors (Mixing RPM, capsule count, weight checks).\\n\\n';
-
-    reportContent += '2. Process Description\\n';
-    reportContent += 'Blending: Active Ingredient A and Binder B were mixed at 60 RPM for 20 minutes.\\n';
-    reportContent += 'Capsule Filling: Capsules filled using Machine #4, calibrated to 10mg ± 0.2mg.\\n';
-    reportContent += 'Inspection: Visual and weight checks were performed every 1000 capsules.\\n';
-    reportContent += 'Packaging: Capsules were packed in foil blister strips and boxed.\\n\\n';
-
-    reportContent += '3. Sampling Plan\\n';
-    reportContent += 'In-process sampling: Every 1000 capsules\\n';
-    reportContent += 'Checked for: Weight, Uniformity, Appearance\\n';
-    reportContent += 'Final sample size: 20 capsules pulled randomly\\n';
-    reportContent += 'Sent to Quality Control Lab\\n';
-    reportContent += 'Tests: Dissolution, Potency, Microbial Limits\\n\\n';
-
-    reportContent += '4. SOPs\\n';
-    reportContent += 'SOP-123: Capsule Filling Procedure\\n';
-    reportContent += 'SOP-124: Blending Operation Guidelines\\n';
-    reportContent += 'SOP-201: Equipment Cleaning and Setup\\n';
-    reportContent += 'SOP-305: In-process Sampling and QC Protocol\\n\\n';
-
-    reportContent += '5. Bill of Materials (BOM)\\n';
-    reportContent += 'Material             | Batch No. | Quantity Used | Source     \\n';
-    reportContent += 'Active Ingredient A  | AI-2211   | 10 kg         | Supplier X \\n';
-    reportContent += 'Binder B             | BB-4420   | 2 kg          | Supplier Y \\n';
-    reportContent += 'Gelatin Capsules     | GC-3301   | 10,000 pcs    | Supplier Z \\n';
-    reportContent += 'Labels               | LBL-120   | 10,000 pcs    | In-house   \\n';
-    reportContent += 'Packaging Boxes      | PB-8771   | 10,000 pcs    | Supplier X \\n';
-    document.getElementById('reportPreview').innerHTML = reportContent.replace(/\\n/g, '<br>');
-});
-
-document.getElementById('downloadButton').addEventListener('click', async function() {
-    // Download the generated report
-    const reportContent = document.getElementById('reportPreview').innerText;
-    if (!reportContent) {
-        alert('No report generated yet. Please generate the report first.');
-        return;
-    }
+    // Create FormData to send files
     const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i]);
+    for (let i = 0; i < window.uploadedFiles.length; i++) {
+        // Optional: Client-side check for .txt files (backend also checks)
+        if (!window.uploadedFiles[i].name.toLowerCase().endsWith('.txt')) {
+            alert(`Skipping non-txt file: ${window.uploadedFiles[i].name}. Only .txt files are processed.`);
+            continue; // Skip this file
+        }
+        formData.append('files', window.uploadedFiles[i]);
     }
+
+    // Check if any valid files remain after filtering
+    if (!formData.has('files')) {
+         alert('No valid .txt files selected to upload.');
+         return;
+    }
+
+
+    // Update UI to indicate processing
+    generateButton.textContent = 'Generating...';
+    generateButton.disabled = true;
+    reportPreview.innerHTML = 'Processing files...';
+    window.generatedReport = null; // Clear previous report
 
     try {
-        const response = await fetch('http://localhost:8000/upload/', {
+        // Send files to the backend
+        const response = await fetch('http://localhost:8000/upload/', { // Ensure this URL matches your backend server
             method: 'POST',
             body: formData
+            // 'Content-Type' header is automatically set by browser for FormData
         });
+
+        if (!response.ok) {
+            // Handle HTTP errors (like 400 or 500)
+            const errorData = await response.json().catch(() => ({ detail: 'Unknown server error' })); // Try to parse error JSON
+            throw new Error(`Server error: ${response.status} ${response.statusText}. ${errorData.detail || ''}`);
+        }
+
+        // Get the report data from the JSON response
         const data = await response.json();
-        document.getElementById('reportPreview').innerHTML = data.report.replace(/\\n/g, '<br>');
+
+        if (data && data.report !== undefined) {
+            // Store the raw report text for download
+            window.generatedReport = data.report;
+            // Display the report in the preview div, converting newlines to <br> for HTML
+            reportPreview.innerHTML = data.report.replace(/\n/g, '<br>');
+            alert('Report generated successfully!');
+        } else {
+            throw new Error('Invalid response format from server.');
+        }
+
     } catch (error) {
         console.error('Error generating report:', error);
+        reportPreview.innerHTML = `Error generating report: ${error.message}`;
+        alert(`Failed to generate report: ${error.message}`);
+    } finally {
+        // Re-enable button and reset text
+        generateButton.textContent = 'Generate Report';
+        generateButton.disabled = false;
     }
-    const blob = new Blob([reportContent], { type: 'text/plain' });
+});
+
+document.getElementById('downloadButton').addEventListener('click', function() {
+    // Use the stored raw report content
+    const reportContent = window.generatedReport;
+
+    if (!reportContent) {
+        alert('No report generated yet or generation failed. Please generate the report first.');
+        return;
+    }
+
+    // Create a Blob from the raw text content
+    const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+
+    // Create a URL for the Blob
     const url = URL.createObjectURL(blob);
+
+    // Create a temporary anchor element for download
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'batch_report.txt';
-    a.click();
+    a.download = 'batch_report.txt'; // Set the desired filename
+    document.body.appendChild(a); // Append to body to ensure click works in all browsers
+    a.click(); // Simulate click to trigger download
+
+    // Clean up: remove the temporary anchor and revoke the URL
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    alert('Report download initiated.');
 });

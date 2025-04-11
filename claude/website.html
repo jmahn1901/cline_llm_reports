@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Batch Report Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        :root {
+            --primary-color: #38b6e0;
+            --primary-dark: #267a96;
+            --secondary-color: #f5f9fa;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --btn-primary: #265f74;
+            --btn-hover: #1d4c5e;
+        }
+
+        body {
+            background-color: #f0f4f7;
+            color: var(--text-color);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Navigation Sidebar */
+        .sidebar {
+            width: 240px;
+            background-color: #fff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-nav {
+            padding: 20px;
+        }
+
+        .nav-item {
+            padding: 10px 0;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary-color);
+            font-weight: bold;
+        }
+
+        .content-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .card-header .cloud-icon {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        /* File Upload Section */
+        .file-upload-section {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .files-list {
+            width: 40%;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+            margin-right: 20px;
+            background-color: var(--secondary-color);
+        }
+
+        .files-list-header {
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .file-item {
+            padding: 8px;
+            border-radius: 3px;
+            margin-bottom: 5px;
+            background-color: white;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .upload-area {
+            width: 60%;
+        }
+
+        .file-input-container {
+            border: 2px dashed var(--primary-color);
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            background-color: var(--secondary-color);
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .file-input-container:hover {
+            background-color: #e7f5f9;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Report Generation Section */
+        .report-generation {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+
+        .generate-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0 20px;
+        }
+
+        .generate-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Report Preview Section */
+        .report-preview {
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 20px;
+            min-height: 200px;
+            background-color: var(--secondary-color);
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .preview-table th, .preview-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .preview-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .preview-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .download-section {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .download-btn {
+            background-color: var(--btn-primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .download-btn:hover {
+            background-color: var(--btn-hover);
+        }
+
+        .download-icon {
+            margin-right: 8px;
+        }
+
+        /* Status Messages */
+        .status-message {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 10px;
+            }
+            
+            .file-upload-section {
+                flex-direction: column;
+            }
+            
+            .files-list, .upload-area {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>Batch Reports</h3>
+            </div>
+            <div class="sidebar-nav">
+                <div class="nav-item active">Dashboard</div>
+                <div class="nav-item">Batch Reports</div>
+                <div class="nav-item">History</div>
+                <div class="nav-item">Settings</div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="header">
+                <h2>Batch Report Generator</h2>
+                <button id="helpBtn" class="upload-btn">Help</button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tab-container">
+                <div class="tab active">Generate Report</div>
+                <div class="tab">Batch Log</div>
+                <div class="tab">Export</div>
+            </div>
+
+            <!-- Main Card Content -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h1>The Batch Report <span class="cloud-icon">☁️</span></h1>
+                </div>
+
+                <!-- Status Message Container (initially hidden) -->
+                <div id="statusMessage" class="status-message" style="display: none;"></div>
+
+                <!-- File Upload Section -->
+                <div class="file-upload-section">
+                    <div class="files-list">
+                        <div class="files-list-header">Uploaded Files</div>
+                        <div id="filesList">
+                            <!-- File items will be added here dynamically -->
+                            <div class="file-empty-message">No files uploaded yet.</div>
+                        </div>
+                    </div>
+
+                    <div class="upload-area">
+                        <label for="fileInput" class="file-input-container">
+                            <p>Drag and drop files here or click to browse</p>
+                            <p>(Accepts .txt, .csv, .md, etc.)</p>
+                            <input type="file" id="fileInput" multiple accept=".txt,.csv,.md,.pdf,.xlsx,.docx">
+                        </label>
+                        <button id="uploadBtn" class="upload-btn">Upload Files</button>
+                    </div>
+                </div>
+
+                <!-- Report Generation Section -->
+                <div class="report-generation">
+                    <h3>Generate the batch report</h3>
+                    <p>Combine all uploaded files into a single report</p>
+                    <button id="generateBtn" class="generate-btn" disabled>Generate Report</button>
+                </div>
+
+                <!-- Report Preview Section (initially hidden) -->
+                <div id="reportPreview" class="report-preview" style="display: none;">
+                    <h3>Report Preview</h3>
+                    <div id="previewContent">
+                        <!-- Preview content will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Download Button (initially hidden) -->
+                <div id="downloadSection" class="download-section" style="display: none;">
+                    <button id="downloadBtn" class="download-btn">
+                        <span class="download-icon">⬇️</span> Download Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const filesList = document.getElementById('filesList');
+        const generateBtn = document.getElementById('generateBtn');
+        const reportPreview = document.getElementById('reportPreview');
+        const previewContent = document.getElementById('previewContent');
+        const downloadSection = document.getElementById('downloadSection');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusMessage = document.getElementById('statusMessage');
+
+        // Store uploaded files
+        let uploadedFiles = [];
+
+        // Click event for the file input container
+        document.querySelector('.file-input-container').addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // File input change event
+        fileInput.addEventListener('change', (event) => {
+            // Store selected files for later upload
+            const selectedFiles = Array.from(event.target.files);
+            
+            // Enable upload button if files are selected
+            if (selectedFiles.length > 0) {
+                uploadBtn.disabled = false;
+            }
+        });
+
+        // Upload button click event
+        uploadBtn.addEventListener('click', () => {
+            if (fileInput.files.length === 0) {
+                showStatus('Please select files to upload.', 'error');
+                return;
+            }
+
+            // Simulate file upload (in a real application, this would be an API call)
+            const files = Array.from(fileInput.files);
+            
+            // Add files to our uploaded files array
+            uploadedFiles = [...uploadedFiles, ...files];
+            
+            // Display the files in the list
+            displayFiles();
+            
+            // Clear the file input
+            fileInput.value = '';
+            
+            // Show success message
+            showStatus(`Successfully uploaded ${files.length} file(s).`, 'success');
+            
+            // Enable generate button if we have uploaded files
+            if (uploadedFiles.length > 0) {
+                generateBtn.disabled = false;
+            }
+        });
+
+        // Generate button click event
+        generateBtn.addEventListener('click', () => {
+            if (uploadedFiles.length === 0) {
+                showStatus('No files available to generate report.', 'error');
+                return;
+            }
+
+            // Show loading message
+            showStatus('Generating report...', 'success');
+            
+            // Simulate report generation (in a real app, this would be an API call)
+            setTimeout(() => {
+                // Display the report preview
+                displayReportPreview();
+                
+                // Show success message
+                showStatus('Report generated successfully!', 'success');
+                
+                // Show the download section
+                downloadSection.style.display = 'flex';
+            }, 1500);
+        });
+
+        // Download button click event
+        downloadBtn.addEventListener('click', () => {
+            // Simulate report download (in a real app, this would generate and download a file)
+            showStatus('Downloading report...', 'success');
+            
+            // Create a simulated download delay
+            setTimeout(() => {
+                showStatus('Report downloaded successfully!', 'success');
+                
+                // In a real application, you would trigger a file download here
+                // For example:
+                // const link = document.createElement('a');
+                // link.href = 'path/to/generated/report.pdf';
+                // link.download = 'batch_report.pdf';
+                // link.click();
+            }, 1000);
+        });
+
+        // Function to display uploaded files
+        function displayFiles() {
+            // Clear the files list
+            filesList.innerHTML = '';
+            
+            // Add each file to the list
+            if (uploadedFiles.length === 0) {
+                filesList.innerHTML = '<div class="file-empty-message">No files uploaded yet.</div>';
+                return;
+            }
+            
+            uploadedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    ${file.name} 
+                    <span style="color: #888; font-size: 0.8em;">(${formatFileSize(file.size)})</span>
+                    <span class="remove-file" data-index="${index}" style="float: right; cursor: pointer; color: #f44336;">✕</span>
+                `;
+                filesList.appendChild(fileItem);
+            });
+            
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.remove-file').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.getAttribute('data-index'));
+                    removeFile(index);
+                    e.stopPropagation();
+                });
+            });
+        }
+
+        // Function to remove a file
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            displayFiles();
+            
+            // Disable generate button if no files are left
+            if (uploadedFiles.length === 0) {
+                generateBtn.disabled = true;
+                reportPreview.style.display = 'none';
+                downloadSection.style.display = 'none';
+            }
+            
+            showStatus('File removed.', 'success');
+        }
+
+        // Function to display report preview
+        function displayReportPreview() {
+            // Show the preview section
+            reportPreview.style.display = 'block';
+            
+            // Generate preview content based on file types
+            let previewHTML = '';
+            
+            // Check if we have mainly tabular data (CSV files)
+            const csvFiles = uploadedFiles.filter(file => file.name.endsWith('.csv'));
+            
+            if (csvFiles.length > 0) {
+                // Display a sample table for preview
+                previewHTML = `
+                    <h4>Combined Report from ${uploadedFiles.length} files</h4>
+                    <p>The following table shows a preview of the combined data:</p>
+                    <table class="preview-table">
+                        <thead>
+                            <tr>
+                                <th>Batch ID</th>
+                                <th>Component</th>
+                                <th>Timestamp</th>
+                                <th>Value</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>B-1001</td>
+                                <td>Component A</td>
+                                <td>2025-04-09 08:14:32</td>
+                                <td>97.4%</td>
+                                <td>Pass</td>
+                            </tr>
+                            <tr>
+                                <td>B-1001</td>
+                                <td>Component B</td>
+                                <td>2025-04-09 08:16:45</td>
+                                <td>98.2%</td>
+                                <td>Pass</td>
+                            </tr>
+                            <tr>
+                                <td>B-1001</td>
+                                <td>Component C</td>
+                                <td>2025-04-09 08:18:10</td>
+                                <td>96.8%</td>
+                                <td>Pass</td>
+                            </tr>
+                            <tr>
+                                <td>B-1002</td>
+                                <td>Component A</td>
+                                <td>2025-04-09 09:22:18</td>
+                                <td>95.1%</td>
+                                <td>Pass</td>
+                            </tr>
+                            <tr>
+                                <td>B-1002</td>
+                                <td>Component B</td>
+                                <td>2025-04-09 09:24:37</td>
+                                <td>93.7%</td>
+                                <td>Pass</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+            } else {
+                // Display a generic text preview
+                previewHTML = `
+                    <h4>Combined Report from ${uploadedFiles.length} files</h4>
+                    <p>Report Date: April 9, 2025</p>
+                    <p>Generated By: System User</p>
+                    <div style="margin: 20px 0; padding: 10px; background-color: #f9f9f9; border-left: 4px solid #38b6e0;">
+                        <p><strong>Summary:</strong></p>
+                        <p>This batch report combines data from ${uploadedFiles.length} source files.</p>
+                        <p>The report includes files of the following types: ${getFileTypesString()}</p>
+                        <p>Total data size processed: ${getTotalFileSize()}</p>
+                    </div>
+                    <p>The full report content would be displayed here in a production environment.</p>
+                `;
+            }
+            
+            previewContent.innerHTML = previewHTML;
+        }
+
+        // Helper function to format file size
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        // Helper function to get string of file types
+        function getFileTypesString() {
+            const types = new Set(uploadedFiles.map(file => {
+                const parts = file.name.split('.');
+                return parts.length > 1 ? parts[parts.length - 1].toUpperCase() : 'Unknown';
+            }));
+            return Array.from(types).join(', ');
+        }
+
+        // Helper function to get total file size
+        function getTotalFileSize() {
+            const totalBytes = uploadedFiles.reduce((total, file) => total + file.size, 0);
+            return formatFileSize(totalBytes);
+        }
+
+        // Function to show status messages
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message ${type}`;
+            statusMessage.style.display = 'block';
+            
+            // Hide the message after 5 seconds
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Initialize the page
+        function init() {
+            // Set initial state
+            displayFiles();
+        }
+
+        // Run initialization
+        init();
+    </script>
+</body>
+</html>

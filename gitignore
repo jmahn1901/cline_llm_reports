@@ -1,3 +1,4 @@
 *.txt
 *.csv
 .DS_Store
+demo/pipeline/__pyache__/

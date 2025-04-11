@@ -1,99 +1,103 @@
 """
-This module implements a FastAPI server for processing uploaded files
-and generating a batch report using mock LLM processing.
+This module implements a FastAPI server for processing uploaded .txt files
+and generating a concatenated batch report.
 """
 
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.middleware.cors import CORSMiddleware # Import CORS middleware
 from typing import List
-import PyPDF2
-import docx
+import logging
+
+# Setup basic logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-def categorize_document(file_content: str) -> str:
-    """
-    Categorize the document based on its content.
+# --- CORS Configuration ---
+# Allow requests from the frontend (typically served via file:// or localhost)
+# Adjust origins if your frontend is served differently
+origins = [
+    "http://localhost",
+    "http://localhost:8080", # Common port for live servers
+    "http://127.0.0.1",
+    "http://127.0.0.1:8080",
+    "null", # Important for requests from file:// protocol
+]
 
-    Args:
-        file_content (str): The content of the file.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"], # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"], # Allow all headers
+)
+# --- End CORS Configuration ---
 
-    Returns:
-        str: The category of the document (e.g., SOP, BOM).
-    """
-    # Mock categorization logic
-    if "SOP" in file_content:
-        return "SOP"
-    elif "BOM" in file_content:
-        return "BOM"
-    else:
-        return "Unknown"
-
-def extract_text_from_pdf(file: UploadFile) -> str:
-    """
-    Extract text from a PDF file.
-
-    Args:
-        file (UploadFile): The uploaded PDF file.
-
-    Returns:
-        str: The extracted text from the PDF.
-    """
-    reader = PyPDF2.PdfReader(file.file)
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text()
-    return text
-
-def extract_text_from_docx(file: UploadFile) -> str:
-    """
-    Extract text from a DOCX file.
-
-    Args:
-        file (UploadFile): The uploaded DOCX file.
-
-    Returns:
-        str: The extracted text from the DOCX.
-    """
-    doc = docx.Document(file.file)
-    return "\n".join([para.text for para in doc.paragraphs])
-
-def process_with_llm(document_type: str, text: str) -> str:
-    """
-    Process the text using a mock LLM based on the document type.
-
-    Args:
-        document_type (str): The type of the document (e.g., SOP, BOM).
-        text (str): The text to be processed.
-
-    Returns:
-        str: The processed output from the LLM.
-    """
-    # Mock LLM processing
-    return f"Processed {document_type}: {text[:100]}..."
 
 @app.post("/upload/")
-async def upload_files(files: List[UploadFile] = File(...)):
+async def upload_files_and_generate_report(files: List[UploadFile] = File(...)):
     """
-    Handle file uploads and generate a batch report.
+    Handles upload of multiple .txt files, concatenates their content,
+    and returns the combined text as a batch report.
 
     Args:
-        files (List[UploadFile]): List of uploaded files.
+        files (List[UploadFile]): List of uploaded files. Expects .txt files.
 
     Returns:
-        dict: A dictionary containing the generated batch report.
+        dict: A dictionary containing the generated batch report under the "report" key.
+
+    Raises:
+        HTTPException: 400 if non-txt files are detected or decoding fails.
     """
-    batch_report = []
+    logger.info(f"Received {len(files)} file(s) for processing.")
+    combined_content = []
+    
     for file in files:
-        if file.filename.endswith('.pdf'):
-            text = extract_text_from_pdf(file)
-        elif file.filename.endswith('.docx'):
-            text = extract_text_from_docx(file)
-        else:
-            text = (await file.read()).decode('utf-8')
+        if not file.filename.lower().endswith('.txt'):
+            logger.warning(f"Skipping non-txt file: {file.filename}")
+            # Optionally raise an error if strict .txt enforcement is needed
+            # raise HTTPException(status_code=400, detail=f"Only .txt files are allowed. Found: {file.filename}")
+            continue # Skip non-txt files silently for now
 
-        document_type = categorize_document(text)
-        partial_output = process_with_llm(document_type, text)
-        batch_report.append(partial_output)
+        logger.info(f"Processing file: {file.filename}")
+        try:
+            # Read file content asynchronously
+            contents = await file.read()
+            # Decode assuming UTF-8, handle potential errors
+            text = contents.decode('utf-8')
+            
+            # Add a header for each file in the report for clarity
+            combined_content.append(f"--- START OF FILE: {file.filename} ---")
+            combined_content.append(text)
+            combined_content.append(f"--- END OF FILE: {file.filename} ---\n") # Add extra newline for separation
 
-    final_report = "\n\n".join(batch_report)
+        except UnicodeDecodeError:
+            logger.error(f"Could not decode file {file.filename} as UTF-8.")
+            raise HTTPException(status_code=400, detail=f"Could not decode file {file.filename}. Ensure it is UTF-8 encoded text.")
+        except Exception as e:
+            logger.error(f"Error processing file {file.filename}: {e}")
+            raise HTTPException(status_code=500, detail=f"An error occurred processing file {file.filename}.")
+        finally:
+            # Ensure file resources are closed
+             await file.close()
+
+
+    if not combined_content:
+         logger.warning("No valid .txt files found or processed.")
+         raise HTTPException(status_code=400, detail="No valid .txt files were provided or processed.")
+
+    # Join all parts with double newlines for separation between files
+    final_report = "\n".join(combined_content)
+    logger.info("Successfully generated combined report.")
+    
     return {"report": final_report}
+
+# Add a root endpoint for basic testing
+@app.get("/")
+async def read_root():
+    return {"message": "Batch Report Generator API is running."}
+
+# To run this app:
+# 1. Install dependencies: pip install fastapi uvicorn python-multipart
+# 2. Run the server: uvicorn app:app --reload --port 8000
